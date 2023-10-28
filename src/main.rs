@@ -15,6 +15,8 @@ use rd8200_ppp_decoder::rd8k::ppp_frame::PPPFrame;
 #[command(author, version, about, long_about = None)]
 struct Cli {
     path: std::path::PathBuf,
+    #[arg(short, long, action = clap::ArgAction::Count)]
+    debug: u8,
 }
 
 // Calculate the RFC-1662 16-bit CRC over all bytes of the packet.
@@ -62,6 +64,7 @@ fn main() -> Result<()> {
     let mut buf = data.as_slice();
     let mut next_ptr = (buf, 0);
 
+    let mut pkt_idx = 0;
     loop {
         let mut ptr = next_ptr;
         let mut fcs_ok = false;
@@ -80,6 +83,7 @@ fn main() -> Result<()> {
 
                 if tmp.len() > 0 {
                     next_ptr = (&tmp[1..], 0);
+                    continue;
                 } else {
                     break;
                 }
@@ -89,15 +93,16 @@ fn main() -> Result<()> {
         if fcs_ok && csum_ok {
             match PPPFrame::from_bytes(ptr) {
                 Ok((rest, frame)) => {
-                    println!("decoded: {:#02x?}", frame);
+                    println!("frame: {pkt_idx} | {:#02x?}", frame);
                 }
                 Err(e) => {
-                    println!("error decoding frame: {}", e);
+                    println!("frame: {pkt_idx} | error decoding frame: {}", e);
                 }
             }
         } else {
-            println!("dropping frame (FCS/csum failure)");
+            println!("frame: {pkt_idx} | dropping frame (FCS/csum failure)");
         }
+        pkt_idx += 1;
     }
 
     Ok(())

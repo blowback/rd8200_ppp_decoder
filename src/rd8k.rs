@@ -1,3 +1,4 @@
+pub mod additional_data;
 pub mod byte_frame;
 pub mod gps_data;
 pub mod mrx_data;
