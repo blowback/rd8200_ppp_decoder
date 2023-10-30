@@ -93,7 +93,7 @@ fn main() -> Result<()> {
         if fcs_ok && csum_ok {
             match PPPFrame::from_bytes(ptr) {
                 Ok((rest, frame)) => {
-                    println!("frame: {pkt_idx} | {:#02x?}", frame);
+                    println!("frame: {pkt_idx}: {}", frame.data);
                 }
                 Err(e) => {
                     println!("frame: {pkt_idx} | error decoding frame: {}", e);
