@@ -27,7 +27,10 @@ impl TryFrom<u8> for ProtocolID {
             x if x == ProtocolID::RDMRX as u8 => Ok(ProtocolID::RDMRX),
             x if x == ProtocolID::RD8100 as u8 => Ok(ProtocolID::RD8100),
             x if x == ProtocolID::RD8200 as u8 => Ok(ProtocolID::RD8200),
-            _ => Err(()),
+            _ => {
+                println!("Invalid ProtocolID: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -87,7 +90,10 @@ impl TryFrom<u8> for LeftRight {
             x if x == LeftRight::RRR as u8 => Ok(LeftRight::RRR),
             x if x == LeftRight::RRRR as u8 => Ok(LeftRight::RRRR),
             x if x == LeftRight::RRRRR as u8 => Ok(LeftRight::RRRRR),
-            _ => Err(()),
+            _ => {
+                println!("Invalid LeftRight: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -147,7 +153,10 @@ impl TryFrom<u8> for AntennaMode {
             x if x == AntennaMode::AFrame as u8 => Ok(AntennaMode::AFrame),
             x if x == AntennaMode::PeakPlus as u8 => Ok(AntennaMode::PeakPlus),
             x if x == AntennaMode::Guidance as u8 => Ok(AntennaMode::Guidance),
-            _ => Err(()),
+            _ => {
+                println!("Invalid AntennaMode: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -190,6 +199,12 @@ pub enum AccessoryType {
     DoubleAntenna,
     StandardStethoscope,
     UnknownAccessory,
+    UnknownAccessory1,
+    UnknownAccessory2,
+    UnknownAccessory3,
+    UnknownAccessory4,
+    UnknownAccessory5,
+    UnknownAccessory6,
 }
 
 impl TryFrom<u8> for AccessoryType {
@@ -209,7 +224,28 @@ impl TryFrom<u8> for AccessoryType {
                 Ok(AccessoryType::StandardStethoscope)
             }
             x if x == AccessoryType::UnknownAccessory as u8 => Ok(AccessoryType::UnknownAccessory),
-            _ => Err(()),
+            x if x == AccessoryType::UnknownAccessory1 as u8 => {
+                Ok(AccessoryType::UnknownAccessory1)
+            }
+            x if x == AccessoryType::UnknownAccessory2 as u8 => {
+                Ok(AccessoryType::UnknownAccessory2)
+            }
+            x if x == AccessoryType::UnknownAccessory3 as u8 => {
+                Ok(AccessoryType::UnknownAccessory3)
+            }
+            x if x == AccessoryType::UnknownAccessory4 as u8 => {
+                Ok(AccessoryType::UnknownAccessory4)
+            }
+            x if x == AccessoryType::UnknownAccessory5 as u8 => {
+                Ok(AccessoryType::UnknownAccessory5)
+            }
+            x if x == AccessoryType::UnknownAccessory6 as u8 => {
+                Ok(AccessoryType::UnknownAccessory6)
+            }
+            _ => {
+                println!("Invalid AccessoryType: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -230,6 +266,12 @@ impl fmt::Display for AccessoryType {
                 AccessoryType::DoubleAntenna => "DoubleAntenna",
                 AccessoryType::StandardStethoscope => "StandardStethoscope",
                 AccessoryType::UnknownAccessory => "UnknownAccessory",
+                AccessoryType::UnknownAccessory1 => "UnknownAccessory1",
+                AccessoryType::UnknownAccessory2 => "UnknownAccessory2",
+                AccessoryType::UnknownAccessory3 => "UnknownAccessory3",
+                AccessoryType::UnknownAccessory4 => "UnknownAccessory4",
+                AccessoryType::UnknownAccessory5 => "UnknownAccessory5",
+                AccessoryType::UnknownAccessory6 => "UnknownAccessory6",
             }
         )
     }
@@ -254,7 +296,10 @@ impl TryFrom<u8> for SondeLine {
         match v {
             x if x == SondeLine::Line as u8 => Ok(SondeLine::Line),
             x if x == SondeLine::Sonde as u8 => Ok(SondeLine::Sonde),
-            _ => Err(()),
+            _ => {
+                println!("Invalid Sonde/Line: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -311,7 +356,10 @@ impl TryFrom<u8> for BatteryLevel {
             x if x == BatteryLevel::Low as u8 => Ok(BatteryLevel::Low),
             x if x == BatteryLevel::VeryLow as u8 => Ok(BatteryLevel::VeryLow),
             x if x == BatteryLevel::Critical as u8 => Ok(BatteryLevel::Critical),
-            _ => Err(()),
+            _ => {
+                println!("Invalid BatteryLevel: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -356,7 +404,10 @@ impl TryFrom<u8> for VolumeLevel {
             x if x == VolumeLevel::Minimum as u8 => Ok(VolumeLevel::Minimum),
             x if x == VolumeLevel::Medium as u8 => Ok(VolumeLevel::Medium),
             x if x == VolumeLevel::Maximum as u8 => Ok(VolumeLevel::Maximum),
-            _ => Err(()),
+            _ => {
+                println!("Invalid VolumeLevel: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
@@ -395,7 +446,10 @@ impl TryFrom<u8> for Overload {
         match v {
             x if x == Overload::NoOverload as u8 => Ok(Overload::NoOverload),
             x if x == Overload::Overload as u8 => Ok(Overload::Overload),
-            _ => Err(()),
+            _ => {
+                println!("Invalid Overload: {:02x}", v);
+                Err(())
+            }
         }
     }
 }
