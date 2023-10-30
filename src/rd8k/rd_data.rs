@@ -22,7 +22,7 @@ impl fmt::Display for RDData {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "[\n\tRD:{}\n\tNEWLOC:{}\n\tMRX{}\n\tRTC:{}\n\tGPS:{}\n]",
+            "[\n\tRD: {{{}}}\n\tNEWLOC: {{{}}}\n\tMRX: {{{}}}\n\tRTC: {{{}}}\n\tGPS: {{{}}}\n]",
             self.rd8k_data, self.new_locator_data, self.mrx_data, self.rtc_data, self.gps_data
         )
     }

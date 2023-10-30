@@ -1,7 +1,8 @@
 use deku::prelude::*;
+use hifitime::prelude::*;
 use std::fmt;
 
-#[derive(Debug, DekuRead, DekuWrite)]
+#[derive(Debug, Clone, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct GPSDate {
     year: u16,
@@ -9,9 +10,40 @@ pub struct GPSDate {
     day: u8,
 }
 
+impl GPSDate {
+    // The RD8200 takes account of the first GPS rollover in august 1999,
+    // but it did not anticipate the second rollver of april 2019, therefore
+    // any times reported after that are off by up to 20 years.
+    pub fn correct_gps_date(&self) -> Self {
+        // we know the year must be 2023 or greater...
+        const REF_YEAR: u16 = 2023;
+
+        // no need to apply this repeatedly as the RD8200 already compensates
+        // for dates after 1999, and we won't need another iteration until 2038
+        if self.year < REF_YEAR {
+            let e = Epoch::from_gregorian_utc_at_midnight(self.year.into(), self.month, self.day);
+            let m = Duration::from_days(7.0 * 1024.0);
+            let e2 = e + m;
+            let (year, month, day, _, _, _, _) = e2.to_gregorian_utc();
+            Self {
+                year: year as u16,
+                month,
+                day,
+            }
+        } else {
+            self.clone()
+        }
+    }
+}
+
 impl fmt::Display for GPSDate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}-{}-{}", self.year, self.month, self.day)
+        let corrected = self.correct_gps_date();
+        write!(
+            f,
+            "{}-{}-{}",
+            corrected.year, corrected.month, corrected.day
+        )
     }
 }
 
@@ -118,11 +150,14 @@ pub struct GPSData {
 
 impl fmt::Display for GPSData {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let (hh, mm, ss) = self.decompose_time();
         write!(
             f,
-            "{} {} hdop:{} alt:{}{} height:{}{} fix:{} #sats:{} lat:{}° lon:{}°",
+            "{} {:02}:{:02}:{:02} hdop:{} alt:{}{} height:{}{} fix:{} #sats:{} lat:{}° lon:{}°",
             self.gps_date,
-            self.utc,
+            hh,
+            mm,
+            ss,
             self.hdop,
             self.altitude,
             self.altitude_units,
@@ -133,5 +168,18 @@ impl fmt::Display for GPSData {
             self.latitude,
             self.longitude
         )
+    }
+}
+
+impl GPSData {
+    pub fn decompose_time(&self) -> (u8, u8, u8) {
+        fn divrem(u: f32) -> (f32, u8) {
+            (u / 100.0, ((u % 100.0).floor()) as u8)
+        }
+
+        let (rest, secs) = divrem(self.utc);
+        let (rest, mins) = divrem(rest);
+        let (rest, hours) = divrem(rest);
+        (hours, mins, secs)
     }
 }
