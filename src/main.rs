@@ -21,7 +21,7 @@ fn fcs(data: &PPPBytes) -> bool {
         let acs = fcs.checksum(&b[1..(l - 3)]);
 
         if pcs != acs {
-            println!("Primary FCS failure: pcs: {:04x} != acs: {:04x}", pcs, acs);
+            eprintln!("Primary FCS failure: pcs: {:04x} != acs: {:04x}", pcs, acs);
             return false;
         } else {
             return true;
@@ -38,7 +38,7 @@ fn csum(data: &mut Vec<u32>) -> bool {
     let acs: u64 = data.iter().fold(0, |acc, x| acc + *x as u64);
 
     if acs & 0xffffffff != pcs & 0xffffffff {
-        println!(
+        eprintln!(
             "Secondary csum failure: pcs: {:04x} != acs: {:04x}",
             pcs, acs
         );
@@ -52,7 +52,10 @@ fn main() -> Result<()> {
     let args = args::Cli::get();
     for path in args.paths.iter() {
         let data = std::fs::read(path.clone())?;
-        println!("Data: {:02x?}", data);
+
+        if args.debug > 2 {
+            println!("Data: {:02x?}", data);
+        }
 
         let buf = data.as_slice();
         let mut next_ptr = (buf, 0);
@@ -72,7 +75,7 @@ fn main() -> Result<()> {
                     csum_ok = csum(&mut undecoded.data);
                 }
                 Err(e) => {
-                    println!("Error reading raw frame: {}", e);
+                    eprintln!("Error reading raw frame: {}", e);
 
                     let tmp = next_ptr.0;
 

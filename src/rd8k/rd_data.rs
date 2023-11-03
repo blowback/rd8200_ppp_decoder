@@ -1,3 +1,4 @@
+use crate::args;
 use crate::rd8k::gps_data::GPSData;
 use crate::rd8k::mrx_data::MRXData;
 use crate::rd8k::new_locator_data::NewLocatorData;
@@ -18,12 +19,33 @@ pub struct RDData {
     csum: RDChecksum,
 }
 
+#[allow(unused_must_use)]
 impl fmt::Display for RDData {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "[\n\tRD: {{{}}}\n\tNEWLOC: {{{}}}\n\tMRX: {{{}}}\n\tRTC: {{{}}}\n\tGPS: {{{}}}\n]",
-            self.rd8k_data, self.new_locator_data, self.mrx_data, self.rtc_data, self.gps_data
-        )
+        let args = args::Cli::get();
+
+        write!(f, "[\n");
+
+        if !args.no_rd {
+            write!(f, "\tRD: {{{}}}\n", self.rd8k_data);
+        }
+
+        if !args.no_loc {
+            write!(f, "\tLOC: {{{}}}\n", self.new_locator_data);
+        }
+
+        if !args.no_mrx {
+            write!(f, "\tMRX: {{{}}}\n", self.mrx_data);
+        }
+
+        if !args.no_rtc {
+            write!(f, "\tRTC: {{{}}}\n", self.rtc_data);
+        }
+
+        if !args.no_gps {
+            write!(f, "\tGPS: {{{}}}\n", self.gps_data);
+        }
+
+        write!(f, "]")
     }
 }

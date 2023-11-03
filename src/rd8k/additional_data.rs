@@ -11,11 +11,12 @@ use std::fmt;
     ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
 )]
 pub enum ProtocolID {
-    RD8900Early = 0,
-    RD8900Late,
+    RD8000Early = 0,
+    RD8000Late,
     RDMRX,
     RD8100,
     RD8200, // a guess
+    Unknown,
 }
 
 impl TryFrom<u8> for ProtocolID {
@@ -23,15 +24,12 @@ impl TryFrom<u8> for ProtocolID {
 
     fn try_from(v: u8) -> Result<Self, Self::Error> {
         match v {
-            x if x == ProtocolID::RD8900Early as u8 => Ok(ProtocolID::RD8900Early),
-            x if x == ProtocolID::RD8900Late as u8 => Ok(ProtocolID::RD8900Late),
+            x if x == ProtocolID::RD8000Early as u8 => Ok(ProtocolID::RD8000Early),
+            x if x == ProtocolID::RD8000Late as u8 => Ok(ProtocolID::RD8000Late),
             x if x == ProtocolID::RDMRX as u8 => Ok(ProtocolID::RDMRX),
             x if x == ProtocolID::RD8100 as u8 => Ok(ProtocolID::RD8100),
             x if x == ProtocolID::RD8200 as u8 => Ok(ProtocolID::RD8200),
-            _ => {
-                println!("Invalid ProtocolID: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(ProtocolID::Unknown),
         }
     }
 }
@@ -42,11 +40,12 @@ impl fmt::Display for ProtocolID {
             f,
             "{}",
             match self {
-                ProtocolID::RD8900Early => "RD8900Early",
-                ProtocolID::RD8900Late => "RD8900Late",
+                ProtocolID::RD8000Early => "RD8000Early",
+                ProtocolID::RD8000Late => "RD8000Late",
                 ProtocolID::RDMRX => "RDMRX",
                 ProtocolID::RD8100 => "RD8100",
                 ProtocolID::RD8200 => "RD8200",
+                ProtocolID::Unknown => "Unknown",
             }
         )
     }
@@ -72,6 +71,7 @@ pub enum LeftRight {
     RRR,
     RRRR,
     RRRRR,
+    Unknown,
 }
 
 impl TryFrom<u8> for LeftRight {
@@ -91,10 +91,7 @@ impl TryFrom<u8> for LeftRight {
             x if x == LeftRight::RRR as u8 => Ok(LeftRight::RRR),
             x if x == LeftRight::RRRR as u8 => Ok(LeftRight::RRRR),
             x if x == LeftRight::RRRRR as u8 => Ok(LeftRight::RRRRR),
-            _ => {
-                println!("Invalid LeftRight: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(LeftRight::Unknown),
         }
     }
 }
@@ -117,6 +114,7 @@ impl fmt::Display for LeftRight {
                 LeftRight::RRR => "RRR",
                 LeftRight::RRRR => "RRRR",
                 LeftRight::RRRRR => "RRRRR",
+                LeftRight::Unknown => "Unknown",
             }
         )
     }
@@ -139,6 +137,7 @@ pub enum AntennaMode {
     AFrame,
     PeakPlus,
     Guidance,
+    Unknown,
 }
 impl TryFrom<u8> for AntennaMode {
     type Error = ();
@@ -154,10 +153,7 @@ impl TryFrom<u8> for AntennaMode {
             x if x == AntennaMode::AFrame as u8 => Ok(AntennaMode::AFrame),
             x if x == AntennaMode::PeakPlus as u8 => Ok(AntennaMode::PeakPlus),
             x if x == AntennaMode::Guidance as u8 => Ok(AntennaMode::Guidance),
-            _ => {
-                println!("Invalid AntennaMode: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(AntennaMode::Unknown),
         }
     }
 }
@@ -177,6 +173,7 @@ impl fmt::Display for AntennaMode {
                 AntennaMode::AFrame => "AFrame",
                 AntennaMode::PeakPlus => "PeakPlus",
                 AntennaMode::Guidance => "Guidance",
+                AntennaMode::Unknown => "Unknown",
             }
         )
     }
@@ -199,13 +196,8 @@ pub enum AccessoryType {
     CDStethoscope,
     DoubleAntenna,
     StandardStethoscope,
-    UnknownAccessory,
-    UnknownAccessory1,
-    UnknownAccessory2,
-    UnknownAccessory3,
-    UnknownAccessory4,
-    UnknownAccessory5,
-    UnknownAccessory6,
+    UnknownAccessory, // this matches a specific bit pattern
+    Unknown,          // blanket case for all unmatched bit patterns
 }
 
 impl TryFrom<u8> for AccessoryType {
@@ -225,28 +217,7 @@ impl TryFrom<u8> for AccessoryType {
                 Ok(AccessoryType::StandardStethoscope)
             }
             x if x == AccessoryType::UnknownAccessory as u8 => Ok(AccessoryType::UnknownAccessory),
-            x if x == AccessoryType::UnknownAccessory1 as u8 => {
-                Ok(AccessoryType::UnknownAccessory1)
-            }
-            x if x == AccessoryType::UnknownAccessory2 as u8 => {
-                Ok(AccessoryType::UnknownAccessory2)
-            }
-            x if x == AccessoryType::UnknownAccessory3 as u8 => {
-                Ok(AccessoryType::UnknownAccessory3)
-            }
-            x if x == AccessoryType::UnknownAccessory4 as u8 => {
-                Ok(AccessoryType::UnknownAccessory4)
-            }
-            x if x == AccessoryType::UnknownAccessory5 as u8 => {
-                Ok(AccessoryType::UnknownAccessory5)
-            }
-            x if x == AccessoryType::UnknownAccessory6 as u8 => {
-                Ok(AccessoryType::UnknownAccessory6)
-            }
-            _ => {
-                println!("Invalid AccessoryType: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(AccessoryType::Unknown),
         }
     }
 }
@@ -267,12 +238,7 @@ impl fmt::Display for AccessoryType {
                 AccessoryType::DoubleAntenna => "DoubleAntenna",
                 AccessoryType::StandardStethoscope => "StandardStethoscope",
                 AccessoryType::UnknownAccessory => "UnknownAccessory",
-                AccessoryType::UnknownAccessory1 => "UnknownAccessory1",
-                AccessoryType::UnknownAccessory2 => "UnknownAccessory2",
-                AccessoryType::UnknownAccessory3 => "UnknownAccessory3",
-                AccessoryType::UnknownAccessory4 => "UnknownAccessory4",
-                AccessoryType::UnknownAccessory5 => "UnknownAccessory5",
-                AccessoryType::UnknownAccessory6 => "UnknownAccessory6",
+                AccessoryType::Unknown => "Unknown",
             }
         )
     }
@@ -288,6 +254,7 @@ impl fmt::Display for AccessoryType {
 pub enum SondeLine {
     Line = 0,
     Sonde,
+    Unknown,
 }
 
 impl TryFrom<u8> for SondeLine {
@@ -297,10 +264,7 @@ impl TryFrom<u8> for SondeLine {
         match v {
             x if x == SondeLine::Line as u8 => Ok(SondeLine::Line),
             x if x == SondeLine::Sonde as u8 => Ok(SondeLine::Sonde),
-            _ => {
-                println!("Invalid Sonde/Line: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(SondeLine::Unknown),
         }
     }
 }
@@ -312,7 +276,6 @@ impl TryFrom<bool> for SondeLine {
         match v {
             false => Ok(SondeLine::Line),
             true => Ok(SondeLine::Sonde),
-            _ => Err(()),
         }
     }
 }
@@ -325,6 +288,7 @@ impl fmt::Display for SondeLine {
             match self {
                 SondeLine::Line => "Line",
                 SondeLine::Sonde => "Sonde",
+                SondeLine::Unknown => "Unknown",
             }
         )
     }
@@ -343,7 +307,8 @@ pub enum BatteryLevel {
     MediumLow, // 1 bar
     Low,       // 0 bars
     VeryLow,   // indicator flashing
-    Critical,  // made up the label, seen in the wild on an RD8200
+    Unknown,
+    Critical, // made up the label, seen in the wild on an RD8200
 }
 
 impl TryFrom<u8> for BatteryLevel {
@@ -357,10 +322,7 @@ impl TryFrom<u8> for BatteryLevel {
             x if x == BatteryLevel::Low as u8 => Ok(BatteryLevel::Low),
             x if x == BatteryLevel::VeryLow as u8 => Ok(BatteryLevel::VeryLow),
             x if x == BatteryLevel::Critical as u8 => Ok(BatteryLevel::Critical),
-            _ => {
-                println!("Invalid BatteryLevel: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(BatteryLevel::Unknown),
         }
     }
 }
@@ -377,6 +339,7 @@ impl fmt::Display for BatteryLevel {
                 BatteryLevel::Low => "Low",
                 BatteryLevel::VeryLow => "VeryLow",
                 BatteryLevel::Critical => "Critical",
+                BatteryLevel::Unknown => "Unknown",
             }
         )
     }
@@ -394,6 +357,7 @@ pub enum VolumeLevel {
     Minimum, // 2 bars
     Medium,  // 1 bar
     Maximum, // 0 bars
+    Unknown,
 }
 
 impl TryFrom<u8> for VolumeLevel {
@@ -405,10 +369,7 @@ impl TryFrom<u8> for VolumeLevel {
             x if x == VolumeLevel::Minimum as u8 => Ok(VolumeLevel::Minimum),
             x if x == VolumeLevel::Medium as u8 => Ok(VolumeLevel::Medium),
             x if x == VolumeLevel::Maximum as u8 => Ok(VolumeLevel::Maximum),
-            _ => {
-                println!("Invalid VolumeLevel: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(VolumeLevel::Unknown),
         }
     }
 }
@@ -423,6 +384,7 @@ impl fmt::Display for VolumeLevel {
                 VolumeLevel::Minimum => "Minimum",
                 VolumeLevel::Medium => "Medium",
                 VolumeLevel::Maximum => "Maximum",
+                VolumeLevel::Unknown => "Unknown",
             }
         )
     }
@@ -438,6 +400,7 @@ impl fmt::Display for VolumeLevel {
 pub enum Overload {
     NoOverload = 0,
     Overload,
+    Unknown,
 }
 
 impl TryFrom<u8> for Overload {
@@ -447,10 +410,7 @@ impl TryFrom<u8> for Overload {
         match v {
             x if x == Overload::NoOverload as u8 => Ok(Overload::NoOverload),
             x if x == Overload::Overload as u8 => Ok(Overload::Overload),
-            _ => {
-                println!("Invalid Overload: {:02x}", v);
-                Err(())
-            }
+            _ => Ok(Overload::Unknown),
         }
     }
 }
@@ -462,7 +422,6 @@ impl TryFrom<bool> for Overload {
         match v {
             false => Ok(Overload::NoOverload),
             true => Ok(Overload::Overload),
-            _ => Err(()),
         }
     }
 }
@@ -475,6 +434,7 @@ impl fmt::Display for Overload {
             match self {
                 Overload::NoOverload => "Noverload",
                 Overload::Overload => "OVERLOAD",
+                Overload::Unknown => "Unknown",
             }
         )
     }
@@ -520,27 +480,46 @@ impl TryFrom<u32> for AdditionalData {
             u.to_le()
         };
 
-        println!("u: {:02x}, u1: {:02x}", u, u1);
-        println!("raw_ad={:02x}", u1);
+        if args.debug > 1 {
+            println!("u: {:02x}, u1: {:02x}", u, u1);
+            println!("raw_ad={:02x}", u1);
+        }
 
-        let bits = if args.lsb0 {
-            u1.view_bits::<Lsb0>()
+        let (prot, cmp, lr, am, at, s, bat, vol, ovl, _) = if args.msb0 {
+            let bits = u1.view_bits::<Msb0>();
+
+            (
+                bits[29..=31].load::<u8>(),
+                bits[20..=28].load::<u16>(),
+                bits[16..=19].load::<u8>(),
+                bits[12..=15].load::<u8>(),
+                bits[8..=11].load::<u8>(),
+                bits[7],
+                bits[4..=6].load::<u8>(),
+                bits[2..=3].load::<u8>(),
+                bits[1],
+                bits[0],
+            )
         } else {
-            u1.view_bits::<Lsb0>()
+            let bits = u1.view_bits::<Lsb0>();
+
+            (
+                bits[29..=31].load::<u8>(),
+                bits[20..=28].load::<u16>(),
+                bits[16..=19].load::<u8>(),
+                bits[12..=15].load::<u8>(),
+                bits[8..=11].load::<u8>(),
+                bits[7],
+                bits[4..=6].load::<u8>(),
+                bits[2..=3].load::<u8>(),
+                bits[1],
+                bits[0],
+            )
         };
 
-        let prot = bits[29..=31].load::<u8>();
-        let cmp = bits[20..=28].load::<u16>();
-        let lr = bits[16..=19].load::<u8>();
-        let am = bits[12..=15].load::<u8>();
-        let at = bits[8..=11].load::<u8>();
-        let s = bits[7];
-        let bat = bits[4..=6].load::<u8>();
-        let vol = bits[2..=3].load::<u8>();
-        let ovl = bits[1];
-        let _ = bits[0];
-
-        println!("prot={:02x} cmp={:02x} lr={:02x} am={:02x} at={:02x} s={} bat={:02x} vol={:02x} ovl={}", prot, cmp, lr, am, at, s, bat, vol, ovl);
+        if args.debug > 1 {
+            println!("prot={:02x} cmp={:02x} lr={:02x} am={:02x} at={:02x} s={} bat={:02x} vol={:02x} ovl={}", prot, cmp, lr, am, at, s, bat, vol, ovl);
+        }
 
         Ok(AdditionalData {
             protocol: ProtocolID::try_from(prot)?,
@@ -560,9 +539,11 @@ impl TryFrom<u32> for AdditionalData {
 
 impl fmt::Display for AdditionalData {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let args = args::Cli::get();
+
         write!(
             f,
-            "{} {}° lr={} ant={} acc={} {} bat={} vol={} {} {:02x}",
+            "{} {}° lr={} ant={} acc={} {} bat={} vol={} {} {}",
             self.protocol,
             self.compass_angle,
             self.left_right,
@@ -572,7 +553,11 @@ impl fmt::Display for AdditionalData {
             self.battery_level,
             self.volume_level,
             self.overload,
-            self.orig,
+            if args.debug > 1 {
+                format!("{:02x}", self.orig)
+            } else {
+                format!("")
+            },
         )
     }
 }
