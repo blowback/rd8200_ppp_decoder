@@ -179,7 +179,7 @@ impl GPSData {
 
         let (rest, secs) = divrem(self.utc);
         let (rest, mins) = divrem(rest);
-        let (rest, hours) = divrem(rest);
+        let (_rest, hours) = divrem(rest);
         (hours, mins, secs)
     }
 }

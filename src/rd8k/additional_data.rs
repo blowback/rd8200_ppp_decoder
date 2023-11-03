@@ -8,7 +8,7 @@ use std::fmt;
     type = "u8",
     bits = "3",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum ProtocolID {
     RD8000Early = 0,
@@ -56,7 +56,7 @@ impl fmt::Display for ProtocolID {
     type = "u8",
     bits = "4",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum LeftRight {
     PeakMode = 0, // aka None
@@ -125,7 +125,7 @@ impl fmt::Display for LeftRight {
     type = "u8",
     bits = "4",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum AntennaMode {
     Peak = 0,
@@ -184,7 +184,7 @@ impl fmt::Display for AntennaMode {
     type = "u8",
     bits = "4",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum AccessoryType {
     None = 0,
@@ -249,7 +249,7 @@ impl fmt::Display for AccessoryType {
     type = "u8",
     bits = "1",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum SondeLine {
     Line = 0,
@@ -299,7 +299,7 @@ impl fmt::Display for SondeLine {
     type = "u8",
     bits = "3",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum BatteryLevel {
     High = 0,  // 3 bars
@@ -350,7 +350,7 @@ impl fmt::Display for BatteryLevel {
     type = "u8",
     bits = "2",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum VolumeLevel {
     Off = 0, // 3 bars
@@ -395,7 +395,7 @@ impl fmt::Display for VolumeLevel {
     type = "u8",
     bits = "1",
     endian = "endian",
-    ctx = "endian: deku::ctx::Endian, bitsize: deku::ctx::BitSize"
+    ctx = "endian: deku::ctx::Endian, _bitsize: deku::ctx::BitSize"
 )]
 pub enum Overload {
     NoOverload = 0,

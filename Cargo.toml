@@ -1,6 +1,6 @@
 [package]
 name = "rd8200_ppp_decoder"
-author = "Ant Skelton <ant@ant.org>"
+authors = ["Ant Skelton <ant@ant.org>"]
 version = "0.1.0"
 edition = "2021"
 
