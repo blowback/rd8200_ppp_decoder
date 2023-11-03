@@ -1,3 +1,4 @@
+use crate::args;
 use deku::bitvec::*;
 use deku::prelude::*;
 use std::fmt;
@@ -502,13 +503,31 @@ pub struct AdditionalData {
     overload: Overload,
     #[deku(bits = 1)]
     reserved: u8,
+    #[deku(skip)]
+    orig: u32,
 }
 
 impl TryFrom<u32> for AdditionalData {
     type Error = ();
 
     fn try_from(u: u32) -> Result<Self, Self::Error> {
-        let bits = BitSlice::<_, Msb0>::from_element(&u);
+        let args = args::Cli::get();
+
+        // let bits = BitSlice::<_, Lsb0>::from_element(&u);
+        let u1: u32 = if args.big_endian {
+            u.to_be()
+        } else {
+            u.to_le()
+        };
+
+        println!("u: {:02x}, u1: {:02x}", u, u1);
+        println!("raw_ad={:02x}", u1);
+
+        let bits = if args.lsb0 {
+            u1.view_bits::<Lsb0>()
+        } else {
+            u1.view_bits::<Lsb0>()
+        };
 
         let prot = bits[29..=31].load::<u8>();
         let cmp = bits[20..=28].load::<u16>();
@@ -521,6 +540,8 @@ impl TryFrom<u32> for AdditionalData {
         let ovl = bits[1];
         let _ = bits[0];
 
+        println!("prot={:02x} cmp={:02x} lr={:02x} am={:02x} at={:02x} s={} bat={:02x} vol={:02x} ovl={}", prot, cmp, lr, am, at, s, bat, vol, ovl);
+
         Ok(AdditionalData {
             protocol: ProtocolID::try_from(prot)?,
             compass_angle: cmp,
@@ -532,6 +553,7 @@ impl TryFrom<u32> for AdditionalData {
             volume_level: VolumeLevel::try_from(vol)?,
             overload: Overload::try_from(ovl)?,
             reserved: 0,
+            orig: u,
         })
     }
 }
@@ -540,7 +562,7 @@ impl fmt::Display for AdditionalData {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{} {}° {} {} {} {} {} {} {}",
+            "{} {}° lr={} ant={} acc={} {} bat={} vol={} {} {:02x}",
             self.protocol,
             self.compass_angle,
             self.left_right,
@@ -549,7 +571,8 @@ impl fmt::Display for AdditionalData {
             self.sonde_line,
             self.battery_level,
             self.volume_level,
-            self.overload
+            self.overload,
+            self.orig,
         )
     }
 }

@@ -1,5 +1,4 @@
 use anyhow::Result;
-use clap::Parser;
 use std::fs;
 use std::fs::File;
 use std::io;
@@ -8,16 +7,9 @@ use std::io::prelude::*;
 use crc::{Algorithm, Crc, CRC_16_IBM_SDLC};
 
 use deku::prelude::*;
+use rd8200_ppp_decoder::args;
 use rd8200_ppp_decoder::rd8k::byte_frame::PPPBytes;
 use rd8200_ppp_decoder::rd8k::ppp_frame::PPPFrame;
-
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Cli {
-    path: std::path::PathBuf,
-    #[arg(short, long, action = clap::ArgAction::Count)]
-    debug: u8,
-}
 
 // Calculate the RFC-1662 16-bit CRC over all bytes of the packet.
 fn fcs(data: &PPPBytes) -> bool {
@@ -57,52 +49,56 @@ fn csum(data: &mut Vec<u32>) -> bool {
 
 // Check the integrity of RD82000 PPP packets, and display them in decoded form.
 fn main() -> Result<()> {
-    let args = Cli::parse();
-    let mut data = std::fs::read(args.path)?;
-    println!("Data: {:02x?}", data);
+    let args = args::Cli::get();
+    for path in args.paths.iter() {
+        let data = std::fs::read(path.clone())?;
+        println!("Data: {:02x?}", data);
 
-    let mut buf = data.as_slice();
-    let mut next_ptr = (buf, 0);
+        let buf = data.as_slice();
+        let mut next_ptr = (buf, 0);
 
-    let mut pkt_idx = 0;
-    loop {
-        let mut ptr = next_ptr;
-        let mut fcs_ok = false;
-        let mut csum_ok = false;
+        let mut pkt_idx = 0;
+        loop {
+            let ptr = next_ptr;
+            #[allow(unused_assignments)]
+            let mut fcs_ok = false;
+            #[allow(unused_assignments)]
+            let mut csum_ok = false;
 
-        match PPPBytes::from_bytes(ptr) {
-            Ok((rest, mut undecoded)) => {
-                next_ptr = rest;
-                fcs_ok = fcs(&undecoded);
-                csum_ok = csum(&mut undecoded.data);
-            }
-            Err(e) => {
-                println!("Error reading raw frame: {}", e);
-
-                let tmp = next_ptr.0;
-
-                if tmp.len() > 0 {
-                    next_ptr = (&tmp[1..], 0);
-                    continue;
-                } else {
-                    break;
-                }
-            }
-        }
-
-        if fcs_ok && csum_ok {
-            match PPPFrame::from_bytes(ptr) {
-                Ok((rest, frame)) => {
-                    println!("frame: {pkt_idx}: {}", frame.data);
+            match PPPBytes::from_bytes(ptr) {
+                Ok((rest, mut undecoded)) => {
+                    next_ptr = rest;
+                    fcs_ok = fcs(&undecoded);
+                    csum_ok = csum(&mut undecoded.data);
                 }
                 Err(e) => {
-                    println!("frame: {pkt_idx} | error decoding frame: {}", e);
+                    println!("Error reading raw frame: {}", e);
+
+                    let tmp = next_ptr.0;
+
+                    if tmp.len() > 0 {
+                        next_ptr = (&tmp[1..], 0);
+                        continue;
+                    } else {
+                        break;
+                    }
                 }
             }
-        } else {
-            println!("frame: {pkt_idx} | dropping frame (FCS/csum failure)");
+
+            if fcs_ok && csum_ok {
+                match PPPFrame::from_bytes(ptr) {
+                    Ok((_rest, frame)) => {
+                        println!("frame: {pkt_idx}: {}", frame.data);
+                    }
+                    Err(e) => {
+                        println!("frame: {pkt_idx} | error decoding frame: {}", e);
+                    }
+                }
+            } else {
+                println!("frame: {pkt_idx} | dropping frame (FCS/csum failure)");
+            }
+            pkt_idx += 1;
         }
-        pkt_idx += 1;
     }
 
     Ok(())
