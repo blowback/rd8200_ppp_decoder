@@ -1,10 +1,6 @@
 use anyhow::Result;
-use std::fs;
-use std::fs::File;
-use std::io;
-use std::io::prelude::*;
 
-use crc::{Algorithm, Crc, CRC_16_IBM_SDLC};
+use crc::{Crc, CRC_16_IBM_SDLC};
 
 use deku::prelude::*;
 use rd8200_ppp_decoder::args;
