@@ -15,7 +15,8 @@ means the year value will be out by up to 19.6 years. The app compensates for th
 ### Additional data
 With an RD8200, I cannot consistently decode sane Additional Data readings. The spec is a little vague,
 but it seems likely that Additional Data is little-endian (as all other RD data), and that bit 31 is the
-Most Significant Bit.
+Most Significant Bit. (The `--big-endian` and `--msb0` options exist to allow you to experiment with the
+other possible permutations.)
 
 However even if these assumptions are correct I can't get stable sane readings: for
 example RD8200 frequently identifies as Protocol ID "RDMRX", but occasionally "RD8100". We also see the
