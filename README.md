@@ -8,10 +8,6 @@ so this may not be accurate for RD8200 data.
 
 ## Known issues
 
-### Byte stuffing
-Not mentioned in the RD8xxx spec, but they've actually implemented HDLC byte stuffing (or Octet
-Stuffing in the RFC argot); I can now reliably parse **all** the packets in the test data files, whereas
-before I was seeing about 25% frames with framing errors.
 
 ### Additional data
 With an RD8200, I cannot consistently decode sane Additional Data readings. The spec is a little vague,
@@ -26,6 +22,17 @@ example RD8200 frequently identifies as Protocol ID "RDMRX", but occasionally "R
 My suspicion is that the spec for "Additional Data" was updated for RD8200, and we don't have enough
 information to decode it properly. We'd need some very controlled tests (varying the fields in Additional
 Data in very precise and controlled ways) to get to the bottom of what's going on.
+
+## Gotchas
+
+### Byte stuffing
+Not mentioned in the RD8xxx spec, but they've actually implemented HDLC byte stuffing (or Octet
+Stuffing in the RFC argot); I can now reliably parse **all** the packets in the test data files, whereas
+before I was seeing about 25% frames with framing errors.
+
+### GPS time
+There have been two GPS date rollovers; the RD8200 compensates for the first, but not the second. This
+means the year value will be out by up to 19.6 years. The app compensates for this.
 
 ## Usage
 
