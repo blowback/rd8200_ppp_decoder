@@ -8,9 +8,10 @@ so this may not be accurate for RD8200 data.
 
 ## Known issues
 
-### GPS time
-There have been two GPS date rollovers; the RD8200 compensates for the first, but not the second. This
-means the year value will be out by up to 19.6 years. The app compensates for this.
+### Byte stuffing
+Not mentioned in the RD8xxx spec, but they've actually implemented HDLC byte stuffing (or Octet
+Stuffing in the RFC argot); I can now reliably parse **all** the packets in the test data files, whereas
+before I was seeing about 25% frames with framing errors.
 
 ### Additional data
 With an RD8200, I cannot consistently decode sane Additional Data readings. The spec is a little vague,
@@ -53,14 +54,6 @@ Options:
 
 ```
 
-File: data/nick_helpful_video.bin
-frame: 0: [
-	RD: {mode: Active, freq: 8192 Hz, depth: 0m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.0002794235, gain: 68 dB xtra:[RD8100 62° lr=R ant=PeakPlus acc=None Line bat=Medium vol=Off Noverload ]}
-	LOC: {Internal GPS}
-	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
-	RTC: {2023-11-2 18:49:57}
-	GPS: {2023-11-2 18:49:58 hdop:99.99 alt:0??? height:0??? fix:None #sats:0 lat:0° lon:0°}
-]
 File: data/bad.ppp.bin
 frame: 0: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 0m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.00000010003047, gain: 140 dB xtra:[RDMRX 14° lr=PeakMode ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
@@ -176,34 +169,55 @@ frame: 3: [
 	GPS: {2023-10-20 14:27:34 hdop:1.21 alt:122.4m height:-27.5m fix:GPS #sats:5 lat:26.214368333333333° lon:-81.78488333333334°}
 ]
 frame: 4: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 3.5327263m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.5832617, gain: 69 dB xtra:[RDMRX 357° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:28:36}
+	GPS: {2023-10-20 14:28:36 hdop:1.11 alt:120.1m height:-27.5m fix:GPS #sats:6 lat:26.21428166666667° lon:-81.78489333333333°}
+]
+frame: 5: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 3.4975986m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.6145068, gain: 69 dB xtra:[RDMRX 350° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:29:41}
 	GPS: {2023-10-20 14:29:41 hdop:1.11 alt:120.1m height:-27.5m fix:GPS #sats:6 lat:26.214273333333335° lon:-81.7849°}
 ]
-frame: 5: [
+frame: 6: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 2.843911m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.53398806, gain: 69 dB xtra:[RDMRX 353° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:30:52}
+	GPS: {2023-10-20 14:30:52 hdop:1.11 alt:116.8m height:-27.5m fix:GPS #sats:6 lat:26.21434° lon:-81.78492°}
+]
+frame: 7: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 2.9146404m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.5164128, gain: 69 dB xtra:[RDMRX 354° lr=L ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:31:54}
+	GPS: {2023-10-20 14:31:54 hdop:1.11 alt:111.5m height:-27.5m fix:GPS #sats:6 lat:26.214126666666665° lon:-81.78532166666666°}
+]
+frame: 8: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 3.1433866m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.5011284, gain: 69 dB xtra:[RDMRX 355° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:32:28}
 	GPS: {2023-10-20 14:32:28 hdop:1.49 alt:106.1m height:-27.5m fix:GPS #sats:5 lat:26.214016666666666° lon:-81.785505°}
 ]
-frame: 6: [
+frame: 9: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 3.2280064m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.503981, gain: 69 dB xtra:[RDMRX 356° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:33:17}
 	GPS: {2023-10-20 14:33:17 hdop:1.11 alt:103.1m height:-27.5m fix:GPS #sats:6 lat:26.213996666666667° lon:-81.785485°}
 ]
-frame: 7: [
+frame: 10: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 2.7362208m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.45021725, gain: 69 dB xtra:[RDMRX 356° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:34:16}
 	GPS: {2023-10-20 14:34:16 hdop:1.49 alt:95.4m height:-27.5m fix:GPS #sats:5 lat:26.21407° lon:-81.78542°}
 ]
-frame: 8: [
+frame: 11: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 3.0886912m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.43347022, gain: 69 dB xtra:[RDMRX 357° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
@@ -212,60 +226,96 @@ frame: 8: [
 ]
 File: data/good_in_a_line.ppp.bin
 frame: 0: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 1.0785714m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.80029565, gain: 34 dB xtra:[RDMRX 359° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:39:22}
+	GPS: {2023-10-20 14:39:22 hdop:1.11 alt:66.9m height:-27.5m fix:GPS #sats:6 lat:26.214413333333333° lon:-81.78522166666667°}
+]
+frame: 1: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 1.0863135m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.78625894, gain: 34 dB xtra:[RDMRX 359° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:39:54}
+	GPS: {2023-10-20 14:39:54 hdop:1.04 alt:65m height:-27.5m fix:GPS #sats:7 lat:26.214476666666666° lon:-81.78511833333333°}
+]
+frame: 2: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 1.0549054m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.48288268, gain: 29 dB xtra:[RDMRX 1° lr=L ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:41:22}
+	GPS: {2023-10-20 14:41:22 hdop:1.03 alt:35.4m height:-27.5m fix:GPS #sats:7 lat:26.214563333333334° lon:-81.78477833333334°}
+]
+frame: 3: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 1.0617288m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.46138635, gain: 29 dB xtra:[RDMRX 358° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-10-20 14:41:50}
+	GPS: {2023-10-20 14:41:50 hdop:1.03 alt:32.8m height:-27.5m fix:GPS #sats:7 lat:26.214538333333333° lon:-81.78475333333333°}
+]
+frame: 4: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.0914825m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.4398328, gain: 29 dB xtra:[RDMRX 357° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:42:29}
 	GPS: {2023-10-20 14:42:29 hdop:0.92 alt:32.1m height:-27.5m fix:GPS #sats:8 lat:26.214513333333333° lon:-81.78474666666666°}
 ]
-frame: 1: [
+frame: 5: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.0813512m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.44831297, gain: 29 dB xtra:[RDMRX 0° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:42:57}
 	GPS: {2023-10-20 14:42:57 hdop:0.85 alt:31.9m height:-27.5m fix:GPS #sats:9 lat:26.214503333333333° lon:-81.78474333333334°}
 ]
-frame: 2: [
+frame: 6: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.0368634m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.46481836, gain: 29 dB xtra:[RDMRX 0° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:45:05}
 	GPS: {2023-10-20 14:45:05 hdop:0.85 alt:29.2m height:-27.5m fix:GPS #sats:9 lat:26.214525° lon:-81.78471666666667°}
 ]
-frame: 3: [
+frame: 7: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.0422623m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.46159294, gain: 29 dB xtra:[RDMRX 2° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:45:42}
 	GPS: {2023-10-20 14:45:42 hdop:0.85 alt:26.5m height:-27.5m fix:GPS #sats:9 lat:26.214566666666666° lon:-81.78467666666667°}
 ]
-frame: 4: [
+frame: 8: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 0.9846948m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.5135343, gain: 29 dB xtra:[RDMRX 359° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:47:02}
 	GPS: {2023-10-20 14:47:02 hdop:0.85 alt:23m height:-27.5m fix:GPS #sats:9 lat:26.214618333333334° lon:-81.78463333333333°}
 ]
-frame: 5: [
+frame: 9: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.092199m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.42468244, gain: 29 dB xtra:[RDMRX 2° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:47:39}
 	GPS: {2023-10-20 14:47:39 hdop:0.85 alt:22.4m height:-27.5m fix:GPS #sats:9 lat:26.214611666666666° lon:-81.78462833333333°}
 ]
-frame: 6: [
+frame: 10: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.0370827m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.45148453, gain: 29 dB xtra:[RDMRX 0° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:48:25}
 	GPS: {2023-10-20 14:48:25 hdop:0.85 alt:20.9m height:-27.5m fix:GPS #sats:9 lat:26.214645° lon:-81.78458833333333°}
 ]
-frame: 7: [
+frame: 11: [
 	RD: {mode: Active, freq: 8192 Hz, depth: 1.1010072m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.43384564, gain: 29 dB xtra:[RDMRX 359° lr=Centre ant=PeakPlus acc=None Sonde bat=High vol=Maximum Noverload ]}
 	LOC: {Internal GPS}
 	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
 	RTC: {2023-10-20 14:48:58}
 	GPS: {2023-10-20 14:48:58 hdop:0.85 alt:19.7m height:-27.5m fix:GPS #sats:9 lat:26.21463° lon:-81.78456166666666°}
+]
+File: data/nick_helpful_video.bin
+frame: 0: [
+	RD: {mode: Active, freq: 8192 Hz, depth: 0m, FF: 0 dBm, cur: 0 A, CD: 0°, SS: 0.0002794235, gain: 68 dB xtra:[RD8100 62° lr=R ant=PeakPlus acc=None Line bat=Medium vol=Off Noverload ]}
+	LOC: {Internal GPS}
+	MRX: {typ:Unused depth:0m sig:0 gain:0dB}
+	RTC: {2023-11-2 18:49:57}
+	GPS: {2023-11-2 18:49:58 hdop:99.99 alt:0??? height:0??? fix:None #sats:0 lat:0° lon:0°}
 ]
 ```
 

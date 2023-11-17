@@ -5,8 +5,6 @@ use deku::prelude::*;
 #[derive(Debug, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
 pub struct PPPBytes {
-    #[deku(assert_eq = "0x7e")]
-    flag_sequence: u8,
     #[deku(assert_eq = "0xff")]
     address: u8,
     #[deku(assert_eq = "0x03")]
@@ -20,11 +18,5 @@ pub struct PPPBytes {
     length: u16,
     #[deku(count = "length / 4")]
     pub data: Vec<u32>,
-    fcs: u16,
-    // RD8200 brackets every packet with FS, ie FS starts and
-    // ends the packet, unlike the more conventional fence-post
-    // arrangement where this is only one FS between subsequent
-    // packets.
-    #[deku(assert_eq = "0x7e")]
-    flag_sequence2: u8,
+    pub fcs: u16,
 }
